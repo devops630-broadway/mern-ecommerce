@@ -5,9 +5,8 @@ on:
       - "master"
   push:
     branches:
-      - '**'
+      - "**"
 
-      
 jobs:
   build-upload:
     runs-on: ubuntu-latest
@@ -15,10 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      
       - name: Check if docker available or not
-        run : which docker
-      
+        run: which docker
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -27,26 +24,26 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: build fronend
-        run : docker build -t mern-fe:$(git log -1 --pretty=format:%h) ./client
-      
+        run: docker build -t mern-fe:$(git log -1 --pretty=format:%h) ./client
+
       - name: build backend
         run: docker build -t mern-be:$(git log -1 --pretty=format:%h) ./server
       - name: upload docker images
         run: |
           docker images
-          docker tag mern-fe:$(git log -1 --pretty=format:%h) dpaktamang/mern-ecomerce-fe:$(git log -1 --pretty=format:%h)
-          docker tag mern-be:$(git log -1 --pretty=format:%h) dpaktamang/mern-ecomerce-be:$(git log -1 --pretty=format:%h)
+          docker tag mern-fe:$(git log -1 --pretty=format:%h) ${{ vars.DOCKER_REGESTRY_FE }}:$(git log -1 --pretty=format:%h)
+          docker tag mern-be:$(git log -1 --pretty=format:%h) ${{ vars.DOCKER_REGESTRY_BE }}:$(git log -1 --pretty=format:%h)
 
           # push
-          docker push dpaktamang/mern-ecomerce-fe:$(git log -1 --pretty=format:%h)
-          docker push dpaktamang/mern-ecomerce-be:$(git log -1 --pretty=format:%h)
+          docker push ${{ vars.DOCKER_REGESTRY_FE }}:$(git log -1 --pretty=format:%h)
+          docker push ${{ vars.DOCKER_REGESTRY_BE }}:$(git log -1 --pretty=format:%h)
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     needs: build-upload
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -55,7 +52,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_wrapper: false 
+          terraform_wrapper: false
       - name: create ec2 instance
         working-directory: .github/IaC
         run: |
@@ -63,10 +60,10 @@ jobs:
           terraform validate
           terraform plan
           terraform apply -auto-approve
-   
+
       - name: update mern app
         working-directory: .github/scripts
-        run: | 
+        run: |
           sudo apt-get update
           sudo apt-get install -y expect
           echo updating app
