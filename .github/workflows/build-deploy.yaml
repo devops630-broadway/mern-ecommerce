@@ -68,5 +68,5 @@ jobs:
           sudo apt-get install -y expect
           echo updating app
           public_ip=$(aws ec2 describe-instances --filters "Name=tag-value,Values=mern-instance" --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
-          sleep 120
+          sleep 60
           ./deploy.sh $public_ip
