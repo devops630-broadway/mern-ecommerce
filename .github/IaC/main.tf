@@ -68,18 +68,25 @@ resource "aws_instance" "mern-instance" {
   user_data = data.template_file.user_data.rendered
 }
 
-output "public_ip" {
-  value = aws_instance.mern-instance.public_ip
+output "public_ip_node1" {
+  value = aws_instance.mern-instance.public_ip[0]
 }
-output "private_ip" {
-  value = aws_instance.mern-instance.private_ip
+output "public_ip_node2" {
+  value = aws_instance.mern-instance.public_ip[1]
+}
+output "private_ip_node1" {
+  value = aws_instance.mern-instance.private_ip[0]
+}
+
+output "private_ip_node2" {
+  value = aws_instance.mern-instance.private_ip[1]
 }
 
 
-output "aws_security_group" {
-  value = data.aws_security_groups.test.ids
-}
+# output "aws_security_group" {
+#   value = data.aws_security_groups.test.ids
+# }
 
-output "subnet_cidr_blocks" {
-  value = [for s in data.aws_subnet.default : s.id]
-}
+# output "subnet_cidr_blocks" {
+#   value = [for s in data.aws_subnet.default : s.id]
+# }
