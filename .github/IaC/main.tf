@@ -52,7 +52,7 @@ data "aws_ami" "ubuntu" {
 
 
 resource "aws_instance" "mern-instance" {
-  count         = 1
+  # count         = 1
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.medium"
 
@@ -66,9 +66,9 @@ resource "aws_instance" "mern-instance" {
   }
 
   user_data = data.template_file.user_data.rendered
-  provisioner "local-exec" {
-    command = "aws ec2 wait instance-status-ok --region us-east-1 --instance-id ${self.id}"
-  }
+  # provisioner "local-exec" {
+  #   command = "aws ec2 wait instance-status-ok --region us-east-1 --instance-id ${self.id}"
+  # }
 }
 
 output "public_ip1" {
