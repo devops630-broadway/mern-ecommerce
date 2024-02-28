@@ -74,17 +74,17 @@ resource "aws_instance" "mern-instance" {
 output "public_ip1" {
   value = aws_instance.mern-instance[0].public_ip
 }
-output "public_ip2" {
-  value = aws_instance.mern-instance[1].public_ip
-}
+# output "public_ip2" {
+#   value = aws_instance.mern-instance[1].public_ip
+# }
 
 output "private_ip1" {
   value = aws_instance.mern-instance[0].private_ip
 }
 
-output "private_ip2" {
-  value = aws_instance.mern-instance[1].private_ip
-}
+# output "private_ip2" {
+#   value = aws_instance.mern-instance[1].private_ip
+# }
 
 
 output "aws_security_group" {
