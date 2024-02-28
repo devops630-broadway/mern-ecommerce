@@ -52,8 +52,9 @@ data "aws_ami" "ubuntu" {
 
 
 resource "aws_instance" "mern-instance" {
+  count         = 1
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
 
   subnet_id              = [for s in data.aws_subnet.default : s.id][0]
   vpc_security_group_ids = data.aws_security_groups.test.ids
@@ -65,13 +66,24 @@ resource "aws_instance" "mern-instance" {
   }
 
   user_data = data.template_file.user_data.rendered
+  provisioner "local-exec" {
+    command = "aws ec2 wait instance-status-ok --region us-east-1 --instance-id ${self.id}"
+  }
 }
 
-output "public_ip" {
-  value = aws_instance.mern-instance.public_ip
+output "public_ip1" {
+  value = aws_instance.mern-instance[0].public_ip
 }
-output "private_ip" {
-  value = aws_instance.mern-instance.private_ip
+output "public_ip2" {
+  value = aws_instance.mern-instance[1].public_ip
+}
+
+output "private_ip1" {
+  value = aws_instance.mern-instance[0].private_ip
+}
+
+output "private_ip2" {
+  value = aws_instance.mern-instance[1].private_ip
 }
 
 

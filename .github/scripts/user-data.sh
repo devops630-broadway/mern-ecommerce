@@ -17,6 +17,12 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 sudo apt-get install -y npm
 sudo usermod -aG docker ubuntu
 
+## Install ansible
+sudo apt update
+sudo apt install software-properties-common -y
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible -y
+
  # Enable password authentication
 sed -i 's/^PasswordAuthentication\s*no/PasswordAuthentication yes/' /etc/ssh/sshd_config
 systemctl restart sshd
