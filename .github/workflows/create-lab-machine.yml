@@ -1,4 +1,4 @@
-name: Create Lab Machine
+name: Create Lab Machine - gitlab,jenkins,k8s
 
 on:
   workflow_dispatch:
