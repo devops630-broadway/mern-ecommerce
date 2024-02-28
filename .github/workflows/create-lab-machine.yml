@@ -13,7 +13,7 @@ on:
         required: true
         type: string
         default: "NULL"
-    create_lab_machine:
+      create_lab_machine:
         description: 'Input key id'
         required: true
         type: choice
@@ -51,6 +51,7 @@ jobs:
             terraform apply -auto-approve
           fi
       - name: Create Gitlab Instance
+        working-directory: .github/scripts
         run: |
           if [[ "${{ github.event.inputs.create_lab_machine }}" == "Gitlab" ]]; then
             public_ip=$(aws ec2 describe-instances --filters "Name=tag-value,Values=mern-instance" --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
