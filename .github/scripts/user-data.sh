@@ -1,4 +1,12 @@
 #!/bin/bash
+
+# Enable password authentication
+sed -i 's/^PasswordAuthentication\s*no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+systemctl restart sshd
+
+echo -e "changeme\nchangeme" | sudo -S passwd ubuntu
+
+
 # Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl
@@ -23,8 +31,4 @@ sudo apt install software-properties-common -y
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible -y
 
- # Enable password authentication
-sed -i 's/^PasswordAuthentication\s*no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-systemctl restart sshd
-
-echo -e "changeme\nchangeme" | sudo -S passwd ubuntu
+ 

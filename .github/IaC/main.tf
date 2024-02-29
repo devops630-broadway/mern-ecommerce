@@ -1,3 +1,8 @@
+resource "random_integer" "random_suffix" {
+  min = 1000
+  max = 9999
+}
+
 data "aws_vpc" "default" {
   default = true
 }
@@ -18,13 +23,13 @@ output "aws_vpc_id" {
   value = data.aws_vpc.default.id
 }
 
-data "aws_security_groups" "test" {
+# data "aws_security_groups" "test" {
 
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
-}
+#   filter {
+#     name   = "vpc-id"
+#     values = [data.aws_vpc.default.id]
+#   }
+# }
 
 
 data "template_file" "user_data" {
@@ -50,25 +55,59 @@ data "aws_ami" "ubuntu" {
 #   parsed_security_groups = split(" ", var.vpc_security_group_ids)
 # }
 
+resource "aws_security_group" "new_security_group" {
+  name        = "new-security-group-${random_integer.random_suffix.result}"
+  description = "Security group with rules open for ports 22, 80, 443, and 8080"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 resource "aws_instance" "mern-instance" {
   # count         = 1
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.medium"
 
-  subnet_id              = [for s in data.aws_subnet.default : s.id][0]
-  vpc_security_group_ids = data.aws_security_groups.test.ids
+  subnet_id = [for s in data.aws_subnet.default : s.id][0]
+  # vpc_security_group_ids = data.aws_security_groups.test.ids
+  vpc_security_group_ids = [aws_security_group.new_security_group.id]
 
 
   tags = {
-    Name    = "mern-instance"
+    Name    = "mern-instance-${branch_name}"
     Project = "devops"
   }
 
   user_data = data.template_file.user_data.rendered
-  # provisioner "local-exec" {
-  #   command = "aws ec2 wait instance-status-ok --region us-east-1 --instance-id ${self.id}"
-  # }
+  provisioner "local-exec" {
+    command = "aws ec2 wait instance-status-ok --region us-east-1 --instance-id ${self.id}"
+  }
 }
 
 output "public_ip1" {
@@ -87,9 +126,9 @@ output "private_ip1" {
 # }
 
 
-output "aws_security_group" {
-  value = data.aws_security_groups.test.ids
-}
+# output "aws_security_group" {
+#   value = data.aws_security_groups.test.ids
+# }
 
 output "subnet_cidr_blocks" {
   value = [for s in data.aws_subnet.default : s.id]
