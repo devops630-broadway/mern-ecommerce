@@ -50,6 +50,10 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
+variable "branch_name" {
+  type    = string
+  default = "production"
+}
 
 # locals {
 #   parsed_security_groups = split(" ", var.vpc_security_group_ids)
