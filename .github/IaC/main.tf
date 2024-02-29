@@ -104,7 +104,7 @@ resource "aws_instance" "mern-instance" {
 
 
   tags = {
-    Name    = "mern-instance-${branch_name}"
+    Name    = "mern-instance-${var.branch_name}"
     Project = "devops"
   }
 
