@@ -52,7 +52,7 @@ jobs:
             terraform init
             terraform validate
             terraform plan
-            terraform apply -auto-approve -var="$branch_name"
+            terraform apply -auto-approve -var="branch_name=$branch_name"
           fi
       - name: Create Gitlab Instance
         working-directory: .github/scripts
