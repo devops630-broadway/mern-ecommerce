@@ -7,12 +7,12 @@ on:
         description: 'Input key id'
         required: true
         type: string
-        default: "AKIA4QVTRDOBRBR6IYRU"
+        default: "AKIAUX3UTI6D42TCTPNA"
       aws_secret_access_key:
         description: 'Input secret key'
         required: true
         type: string
-        default: "nwwkTTg9Bt26Fa4Ab7rE+o6m6VsSJvOzyjXicfkl"
+        default: "XuD+1QrvHwhxJ2FCd9Ov2r39RMBKMcvDRY61hI2j"
       create_lab_machine:
         description: 'Input key id'
         required: true
