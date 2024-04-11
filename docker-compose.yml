@@ -1,0 +1,33 @@
+version: '3'
+services:
+  client:
+    build: client
+    ports:
+      - '8080:8080'
+  restart: always
+  server:
+    build: server
+    environment:
+      - PORT=3000
+      - BASE_API_URL=api
+      - CLIENT_URL=http://client:8080
+      - JWT_SECRET=fafasdfasdfasdfasdfasdfa
+      - MONGODB_URI=mongodb://mernadmin:changeme@mongodb:27017/mern
+    ports:
+      - '3000:3000'
+    restart: always
+    depends_on:
+      - mongodb
+  mongodb:
+    container_name: db
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mernadmin
+      MONGO_INITDB_ROOT_PASSWORD: changeme
+      MONGO_INITDB_DATABASE: mern
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-data:/data/db
+      - ./mongo-init-scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: always
