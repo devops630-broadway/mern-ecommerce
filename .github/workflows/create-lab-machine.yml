@@ -23,6 +23,7 @@ on:
           - Jenkins
           - K8S
           - ec2-instance
+          - ecs
 
 jobs:
   create-lab-instance:
@@ -40,11 +41,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false 
-      - name: create ec2 instance
-        working-directory: .github/IaC
+      - name: create ecs cluster
+        working-directory: .github/IaC/ecs
         run: |
-          public_ip=$(aws ec2 describe-instances --filters "Name=tag-value,Values=mern-instance" --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
-          if [ -z $public_ip ];then
+          if [[ "${{ github.event.inputs.create_lab_machine }}" == "ecs" ]]; then
             terraform init
             terraform validate
             terraform plan
